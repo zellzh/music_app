@@ -1,5 +1,17 @@
 // 字体大小(大写px, 不自动转换rem)
-$font_s: 12Px;
-$font_m: 13Px;
-$font_l: 15Px;
-$font_xl: 17Px;
+$font-s: 12Px;
+$font-m: 13Px;
+$font-l: 15Px;
+$font-xl: 17Px;
+
+/* 主题相关
+   ========================================================================== */
+
+// 主题包
+$themes:(
+  (name: theme, bgc-main: #d43c33, bgc-sub: #f5f5f5, ft-color: #666, ft-color-active: #d43c33),
+  (name: theme1, bgc-main: #31c27c, bgc-sub: #f5f5f5, ft-color: #666, ft-color-active: #31c27c),
+  (name: theme2, bgc-main: #333, bgc-sub: #444, ft-color: #ddd, ft-color-active: #fc3, icon-color: #fc3),
+);
+
+

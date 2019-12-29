@@ -1,8 +1,11 @@
+/* 工具类
+   ========================================================================== */
+
 // 各种设备字体大小保持一致
-@mixin font_size($font-size){
+@mixin font-size($font-size){
   font-size: $font-size;
-  [data-dpr='2'] &{font-size: $font-size * 2}
-  [data-dpr='3'] &{font-size: $font-size * 3}
+  [data-dpr='2'] &{font-size: $font-size * 2};
+  [data-dpr='3'] &{font-size: $font-size * 3};
 }
 
 // 最多显示一行, 超出用'...'显示
@@ -22,3 +25,22 @@
   -webkit-line-clamp: $n;
 }
 
+/* 主题类
+   ========================================================================== */
+
+// 控件颜色
+@mixin bgc-main () {
+  @each $theme in $themes {
+    [data-theme=#{map-get($theme, name)}] &{background: map-get($theme, bgc-main);};
+  }
+}
+
+// 图标颜色
+@mixin icon-color () {
+  color: #fff;
+  @each $theme in $themes {
+    @if map-has_key($theme, icon-color) {
+      [data-theme=#{map-get($theme, name)}] &{color: map-get($theme, icon-color);};
+    }
+  }
+}

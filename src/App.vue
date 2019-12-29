@@ -1,12 +1,20 @@
 <template>
   <div id="app">
-    <p>我是段落</p>
+    <Header/>
   </div>
 </template>
+<script>
+import Header from './components/home/Header'
 
 export default {
+  name: 'App',
+
+  components: {
+    Header
+  }
 
 }
+</script>
 
 <style lang="scss">
 </style>
