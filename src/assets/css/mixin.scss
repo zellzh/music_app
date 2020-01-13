@@ -9,11 +9,10 @@
 }
 
 // 最多显示一行, 超出用'...'显示
-@mixin clamp-one($width){
-  max-width: $width;
+@mixin clamp-one(){
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 // 最多显示n行, 超出用'...'显示
@@ -25,22 +24,71 @@
   -webkit-line-clamp: $n;
 }
 
+// z-index
+@function z-index($key) {
+  @return map-get($z-index, $key);
+}
+@mixin z-index($key) {
+  z-index: z-index($key);
+}
+
 /* 主题类
    ========================================================================== */
 
-// 控件颜色
-@mixin bgc-main () {
+// background
+@mixin bgc-type($type) {
   @each $theme in $themes {
-    [data-theme=#{map-get($theme, name)}] &{background: map-get($theme, bgc-main);};
+    [data-theme=#{map-get($theme, name)}] &{background: map-get($theme, $type);};
   }
 }
 
-// 图标颜色
-@mixin icon-color () {
-  color: #fff;
+// color
+@mixin ftc-type ($type) {
   @each $theme in $themes {
-    @if map-has_key($theme, icon-color) {
-      [data-theme=#{map-get($theme, name)}] &{color: map-get($theme, icon-color);};
-    }
+    [data-theme=#{map-get($theme, name)}] &{color: map-get($theme, $type);};
   }
 }
+
+// border
+//@mixin bd-type ($type, $direct: bottom, $size: 1px, $shape: solid) {
+//  @each $theme in $themes {
+//    [data-theme=#{map-get($theme, name)}] &{
+//      border-#{$direct}: $size $shape map-get($theme, $type);
+//    };
+//  }
+//}
+
+// 字体颜色1
+//@mixin ft-color () {
+//  @each $theme in $themes {
+//    [data-theme=#{map-get($theme, name)}] &{color: map-get($theme, ft-color);};
+//  }
+//}
+
+// 主体颜色
+//@mixin bgc-sub () {
+//  @each $theme in $themes {
+//    [data-theme=#{map-get($theme, name)}] &{background: map-get($theme, bgc-sub);};
+//  }
+//}
+
+// 字体颜色2
+//@mixin ft-sub-color () {
+//  @each $theme in $themes {
+//    [data-theme=#{map-get($theme, name)}] &{color: map-get($theme, ft-sub-color);};
+//  }
+//}
+
+// 选中字体颜色
+//@mixin ft-color-active () {
+//  @each $theme in $themes {
+//    [data-theme=#{map-get($theme, name)}] &{color: map-get($theme, ft-color-active);};
+//  }
+//}
+
+// 边框颜色
+//@mixin bd-color () {
+//  @each $theme in $themes {
+//    [data-theme=#{map-get($theme, name)}] &{background: map-get($theme, ft-color-active);};
+//  }
+//}

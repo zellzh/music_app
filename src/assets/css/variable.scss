@@ -4,14 +4,30 @@ $font-m: 13Px;
 $font-l: 15Px;
 $font-xl: 17Px;
 
+// z-index
+$z-index: (
+  modal              : 200,
+  navigation         : 100,
+  footer             : 90,
+  header             : 90,
+  front              : 1,
+  bg                 : -1
+);
+
 /* 主题相关
    ========================================================================== */
+$bgc-main: bgc-main;
+$bgc-sub: bgc-sub;
+$ftc-main: ftc-main;
+$ftc-sub: ftc-sub;
+$ftc-active: ftc-active;
+$icon-color: icon-color;
 
 // 主题包
 $themes:(
-  (name: theme, bgc-main: #d43c33, bgc-sub: #f5f5f5, ft-color: #666, ft-color-active: #d43c33),
-  (name: theme1, bgc-main: #31c27c, bgc-sub: #f5f5f5, ft-color: #666, ft-color-active: #31c27c),
-  (name: theme2, bgc-main: #333, bgc-sub: #444, ft-color: #ddd, ft-color-active: #fc3, icon-color: #fc3),
+  (name: theme, $bgc-main: #d43c33, $bgc-sub: #f5f5f5, $ftc-main: #333, $ftc-sub: #838383, $ftc-active: #d43c33, $icon-color: #fff),
+  (name: theme1, $bgc-main: #31c27c, $bgc-sub: #f5f5f5, $ftc-main: #333, $ftc-sub: #838383, $ftc-active: #31c27c, $icon-color: #fff),
+  (name: theme2, $bgc-main: #333, $bgc-sub: #444, $ftc-main: #ddd, $ftc-sub: #aaa, $ftc-active: #fc3, $icon-color: #fc3),
 );
 
 
