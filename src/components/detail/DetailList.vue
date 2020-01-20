@@ -1,6 +1,6 @@
 <template>
     <ul class="detail-list">
-      <li class="list-item" v-for="(value, index) in songlist" :key="value.id">
+      <li class="list-item" v-for="(value, index) in songlist" :key="value.id" @click="selectSong">
         <div class="item-left">
           <p class="item-song">{{value.name}}</p>
           <p class="item-artist">{{artists[index]}}</p>
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'DetailList',
   props: {
@@ -20,6 +22,12 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    }
+  },
+  methods: {
+    ...mapActions(['setNormalPlayer']),
+    selectSong () {
+      this.setNormalPlayer(true)
     }
   },
   computed: {
@@ -30,9 +38,9 @@ export default {
         if (item.ar.length > 1) {
           let formatArtist = ''
           item.ar.forEach(value => {
-            formatArtist += value.name + ' / '
+            formatArtist += value.name + '/'
           })
-          formatArtist = formatArtist.slice(0, formatArtist.lastIndexOf(' / '))
+          formatArtist = formatArtist.slice(0, formatArtist.lastIndexOf('/'))
           formatArtist += ' - ' + item.al.name
           artists.push(formatArtist)
         } else {

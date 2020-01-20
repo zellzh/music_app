@@ -1,6 +1,6 @@
 <template>
     <header class="player-header">
-      <div class="header-left" @click="down">
+      <div class="header-left" @click="hideNormalPlayer">
         <svg-icon iconName="down"/>
       </div>
       <div class="header-info">
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Header',
@@ -19,9 +20,9 @@ export default {
 
   },
   methods: {
-    down () {
-      // this.scroll.innerScroll.destroy()
-      // this.scroll.outerScroll.destroy()
+    ...mapActions(['setNormalPlayer']),
+    hideNormalPlayer () {
+      this.setNormalPlayer(false)
     }
   }
 }

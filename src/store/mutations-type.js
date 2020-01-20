@@ -1,0 +1,5 @@
+export const SET_NORMAL_PLAYER = 'SET_NORMAL_PLAYER'
+export const SET_MINI_PLAYER = 'SET_MINI_PLAYER'
+export const SET_LIST_PLAYER = 'SET_LIST_PLAYER'
+export const SET_PLAYING = 'SET_PLAYING'
+

@@ -4,7 +4,7 @@
       <h3 class="title">最新音乐</h3>
     </div>
     <ul class="newsong-list">
-      <li class="newsong-item" v-for="(value, index) in songs" :key="value.id">
+      <li class="newsong-item" v-for="(value, index) in songs" :key="value.id" @click="showNormalPlayer">
         <div class="item-left">
           <p class="item-info">
             {{value.name}}
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'NewSong',
   props: {
@@ -40,10 +42,9 @@ export default {
       this.songs.forEach(item => {
         if (item.song.artists.length > 1) {
           let formatArtist = ''
-          item.song.artists.forEach(value => {
-            formatArtist += value.name + ' / '
+          item.song.artists.forEach((value, index) => {
+            formatArtist += index === 0 ? value.name : '/' + value.name
           })
-          formatArtist = formatArtist.slice(0, formatArtist.lastIndexOf(' / '))
           formatArtist += ' - ' + item.song.album.name
           artists.push(formatArtist)
         } else {
@@ -51,6 +52,12 @@ export default {
         }
       })
       return artists
+    }
+  },
+  methods: {
+    ...mapActions(['setNormalPlayer']),
+    showNormalPlayer () {
+      this.setNormalPlayer(true)
     }
   }
 }

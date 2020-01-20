@@ -58,7 +58,9 @@ export default {
   width: 100%;
   padding: 10px 15px;
   position: relative;
-  .slide-jump{
+  .swiper-container{
+    z-index: 0; // swiper bug, 防止自动设置 z-index
+    .slide-jump{
       display: inline-block;
       width: 100%;
       overflow: hidden;
@@ -66,7 +68,7 @@ export default {
         width: 100%;
       }
     }
-
+  }
   /* 修改插件自定义的css时, 需要深度穿透 */
   ::v-deep .my-bullet{
     display: inline-block;

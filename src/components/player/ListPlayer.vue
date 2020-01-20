@@ -37,6 +37,7 @@
 
 <script>
 import ScrollView from '../common/ScrollView(BScroll)'
+
 export default {
   name: 'ListPlayer',
   components: {

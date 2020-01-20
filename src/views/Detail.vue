@@ -49,6 +49,27 @@ export default {
   },
   props: ['id', 'type'],
   created () {
+    switch (this.type) {
+      case 'personalized': // 推荐歌单详情
+        api.getPersonalizedDetail(this.id).then(data => {
+          if (data) {
+            this.playlist = data.playlist
+          }
+        })
+        break
+      case 'album': // 最新专辑详情
+        api.getAlbumDetail(this.id).then(data => {
+          if (data) {
+            this.playlist = {
+              name: data.album.name,
+              coverImgUrl: data.album.picUrl,
+              tracks: data.songs
+            }
+          }
+        })
+        break
+    }
+    /*
     if (this.type === 'personalized') { // 推荐歌单详情
       api.getPersonalizedDetail(this.id).then(data => {
         if (data) {
@@ -66,44 +87,44 @@ export default {
         }
       })
     }
+     */
   },
   mounted () {
     this.initScroll()
-    // 下拉图片放大
+
+    // 监听上拉: 范围内, 内层禁用, 启用外层; 范围外反之
+    // 内层滚动之前, 外层能滚动, 禁用内层
+    this.innerScroll.on('beforeScrollStart', obj => {
+      if (this.outerScroll.y <= 0 && this.outerScroll.y > this.outerScroll.maxScrollY) {
+        this.innerScroll.disable()
+        this.outerScroll.enable()
+      } else if (this.outerScroll.y > 0) { // 防止下拉外层卡住导致bug
+        this.outerScroll.enable()
+        this.outerScroll.scrollTo(0, 0)
+      }
+    })
+    // 外层混动之前, 内层有滚动, 禁用外层
+    this.outerScroll.on('beforeScrollStart', obj => {
+      if (this.innerScroll.y !== 0) {
+        this.outerScroll.disable()
+        this.innerScroll.enable()
+      }
+    })
+    // 边界滚动 & 下拉
     let imgHeight = this.$refs.info.$el.offsetHeight
-    this.outerScroll.on('scroll', obj => {
-      if (obj.y > 0) {
+    this.outerScroll.on('scroll', obj => { // 外层到达边界, 启动内层
+      if (obj.y === this.outerScroll.maxScrollY && this.outerScroll.movingDirectionY === 1) {
+        this.outerScroll.disable()
+        this.innerScroll.enable()
+      } else if (obj.y > 0) {
+      // 下拉图片放大
         let scale = obj.y / imgHeight + 1
         this.$refs.info.$el.style.transform = `scale(${scale})`
       }
     })
-
-    // 上拉禁用内层滚动, 启用外层滚动
-    let deviceWidth = this.$refs.outerScroll.offsetWidth
-    let scrollBorder = 500 / 750 * deviceWidth
-    this.innerScroll.on('beforeScrollStart', () => {
-      if (this.outerScroll.y <= 0 && this.outerScroll.y > -scrollBorder) {
-        this.innerScroll.disable()
+    this.innerScroll.on('scroll', obj => { // 内层到达边界, 启动外层
+      if (obj.y === 0 && this.innerScroll.movingDirectionY === -1) {
         this.outerScroll.enable()
-      }
-      if (this.outerScroll.y > 0) {
-        this.outerScroll.scrollTo(0, 0)
-      }
-      if (this.innerScroll.maxScrollY === 0) {
-        this.outerScroll.enable()
-      }
-    })
-    this.outerScroll.on('scroll', (obj) => {
-      if (obj.y <= -scrollBorder) {
-        this.outerScroll.stop()
-        this.outerScroll.scrollTo(0, -scrollBorder)
-
-        this.innerScroll.enable()
-      } else if (this.innerScroll.y !== 0) {
-        this.outerScroll.scrollTo(0, -scrollBorder)
-        this.outerScroll.stop()
-
-        // this.innerScroll.scrollTo(0, 0)
         this.innerScroll.disable()
       }
     })
@@ -115,13 +136,14 @@ export default {
         probeType: 3,
         nestedScroll: true,
         observeDOM: true,
+        click: true,
         bounce: {
           bottom: false
         }
       })
       // inner
       this.innerScroll = new BScroll(this.$refs.innerScroll, {
-        probeType: 3,
+        probeType: 2,
         nestedScroll: true,
         observeDOM: true,
         bounce: {
@@ -137,6 +159,7 @@ export default {
   /*
   BUG记录:
     - 移动端真机有`状态栏` / `工具栏` / '标签栏' 等, 可能会挡住底部内容
+    - 不同的浏览器视口也不一样
    */
 .detail{
   width: 100%;
@@ -173,7 +196,7 @@ export default {
         }
         .inner-scroll{
           width: 100%;
-          height: 1134px;
+          height: 1134px; // 视口不一定
           overflow: hidden;
         }
       }

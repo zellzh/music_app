@@ -1,8 +1,8 @@
 <template>
   <section class="player">
-    <NormalPlayer/>
-    <MiniPlayer/>
-    <ListPlayer/>
+    <NormalPlayer v-if="showNormalPlayer"/>
+    <MiniPlayer v-if="showMiniPlayer"/>
+    <ListPlayer v-if="showListPlayer"/>
   </section>
 </template>
 
@@ -10,6 +10,7 @@
 import NormalPlayer from '../components/player/NormalPlayer'
 import MiniPlayer from '../components/player/MiniPlayer'
 import ListPlayer from '../components/player/ListPlayer'
+import { mapState } from 'vuex'
 
 export default {
   name: 'player',
@@ -17,6 +18,9 @@ export default {
     NormalPlayer,
     MiniPlayer,
     ListPlayer
+  },
+  computed: {
+    ...mapState(['showNormalPlayer', 'showMiniPlayer', 'showListPlayer'])
   }
 }
 </script>
