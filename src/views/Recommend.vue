@@ -62,6 +62,9 @@ export default {
     bottom: 0;
     left: 0;
     right: 0;
+    .scroll-content{
+      padding-bottom: 120px;
+    }
     .v-enter, .v-leave-to{
       transform: translateX(100%);
     }

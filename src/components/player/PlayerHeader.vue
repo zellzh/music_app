@@ -1,6 +1,6 @@
 <template>
     <header class="player-header">
-      <div class="header-left" @click="hideNormalPlayer">
+      <div class="header-left" @click="switchPlayer">
         <svg-icon iconName="down"/>
       </div>
       <div class="header-info">
@@ -20,9 +20,9 @@ export default {
 
   },
   methods: {
-    ...mapActions(['setNormalPlayer']),
-    hideNormalPlayer () {
-      this.setNormalPlayer(false)
+    ...mapActions(['setPlayerType']),
+    switchPlayer () {
+      this.setPlayerType('MiniPlayer')
     }
   }
 }

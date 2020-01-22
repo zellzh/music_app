@@ -1,8 +1,16 @@
 <template>
   <section class="player">
-    <NormalPlayer v-if="showNormalPlayer"/>
+    <!--
+    <NormalPlayer v-show="showNormalPlayer"/>
     <MiniPlayer v-if="showMiniPlayer"/>
-    <ListPlayer v-if="showListPlayer"/>
+    <ListPlayer v-show="showListPlayer"/>
+    -->
+    <transition
+      :css="false"
+      @enter="enter"
+      @leave="leave">
+      <component :is="playerType"/>
+    </transition>
   </section>
 </template>
 
@@ -11,6 +19,8 @@ import NormalPlayer from '../components/player/NormalPlayer'
 import MiniPlayer from '../components/player/MiniPlayer'
 import ListPlayer from '../components/player/ListPlayer'
 import { mapState } from 'vuex'
+import Velocity from 'velocity-animate'
+import 'velocity-animate/velocity.ui.min'
 
 export default {
   name: 'player',
@@ -20,7 +30,15 @@ export default {
     ListPlayer
   },
   computed: {
-    ...mapState(['showNormalPlayer', 'showMiniPlayer', 'showListPlayer'])
+    ...mapState(['playerType'])
+  },
+  methods: {
+    enter (el, done) {
+      Velocity(el, 'transition.slideUpBigIn', { duration: 800, display: '' }, () => { done() })
+    },
+    leave (el, done) {
+      Velocity(el, 'transition.slideDownBigOut', 800, () => { done() })
+    }
   }
 }
 </script>

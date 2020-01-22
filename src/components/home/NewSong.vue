@@ -4,7 +4,7 @@
       <h3 class="title">最新音乐</h3>
     </div>
     <ul class="newsong-list">
-      <li class="newsong-item" v-for="(value, index) in songs" :key="value.id" @click="showNormalPlayer">
+      <li class="newsong-item" v-for="(value, index) in songs" :key="value.id" @click="showPlayer">
         <div class="item-left">
           <p class="item-info">
             {{value.name}}
@@ -55,9 +55,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setNormalPlayer']),
-    showNormalPlayer () {
-      this.setNormalPlayer(true)
+    ...mapActions(['setPlayerType']),
+    showPlayer () {
+      this.setPlayerType('NormalPlayer')
     }
   }
 }

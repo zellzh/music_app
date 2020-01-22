@@ -1,7 +1,8 @@
 import {
   SET_NORMAL_PLAYER,
   SET_MINI_PLAYER,
-  SET_LIST_PLAYER
+  SET_LIST_PLAYER,
+  SET_PLAYER_TYPE
 } from './mutations-type'
 
 export default {
@@ -13,5 +14,8 @@ export default {
   },
   setListPlayer ({ commit }, payload) {
     commit(SET_LIST_PLAYER, payload)
+  },
+  setPlayerType ({ commit }, payload) {
+    commit(SET_PLAYER_TYPE, payload)
   }
 }

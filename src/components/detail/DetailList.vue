@@ -1,6 +1,6 @@
 <template>
     <ul class="detail-list">
-      <li class="list-item" v-for="(value, index) in songlist" :key="value.id" @click="selectSong">
+      <li class="list-item" v-for="(value, index) in songlist" :key="value.id" @click="showPlayer">
         <div class="item-left">
           <p class="item-song">{{value.name}}</p>
           <p class="item-artist">{{artists[index]}}</p>
@@ -25,9 +25,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setNormalPlayer']),
-    selectSong () {
-      this.setNormalPlayer(true)
+    ...mapActions(['setPlayerType']),
+    showPlayer () {
+      this.setPlayerType('NormalPlayer')
     }
   },
   computed: {
@@ -55,6 +55,7 @@ export default {
 
 <style scoped lang="scss">
 .detail-list{
+  padding-bottom: 120px;
   .list-item{
     display: flex;
     justify-content: space-between;
