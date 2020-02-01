@@ -185,7 +185,7 @@ export default {
           height: 100px;
           line-height: 80px;
           padding: 10px 15px;
-          font-size: 55px;
+          font-size: 60px;
           @include ftc-type($ftc-main);
           span{
             margin-left: 20px;

@@ -37,9 +37,9 @@ export default {
     justify-content: space-between;
     align-items: center;
     .header-left, .header-right{
-      width: 50px;
-      font-size: 50px;
-      color: #f3f3f3;
+      width: 55px;
+      font-size: 55px;
+      color: #c3c3c3;
     }
     .header-info{
       max-width: 550px;
@@ -51,6 +51,7 @@ export default {
       color: #f3f3f3;
       .header-artist{
         padding-top: 5px;
+        color: #a3a3a3;
         @include font-size($font-l);
       }
     }

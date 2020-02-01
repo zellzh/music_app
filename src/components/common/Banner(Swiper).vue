@@ -49,6 +49,14 @@ export default {
         observeSlideChildren: true
       }
     }
+  },
+  mounted () {
+    // 待优化
+  },
+  computed: {
+    swiper () {
+      return this.$refs.mySwiper.swiper
+    }
   }
 }
 </script>

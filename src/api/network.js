@@ -1,7 +1,7 @@
 // axios 请求数据
 import axios from 'axios'
-// axios.defaults.baseURL = 'http://127.0.0.1:3000'
-axios.defaults.baseURL = 'http://192.168.1.10:3000'
+axios.defaults.baseURL = 'http://127.0.0.1:3000'
+// axios.defaults.baseURL = 'http://192.168.1.7:3000'
 axios.defaults.timeout = 3000
 
 export default {

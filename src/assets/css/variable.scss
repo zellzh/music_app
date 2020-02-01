@@ -25,8 +25,8 @@ $icon-color: icon-color;
 
 // 主题包
 $themes:(
-  (name: theme, $bgc-main: #d43c33, $bgc-sub: #f5f5f5, $ftc-main: #333, $ftc-sub: #838383, $ftc-active: #d43c33, $icon-color: #fff),
-  (name: theme1, $bgc-main: #31c27c, $bgc-sub: #f5f5f5, $ftc-main: #333, $ftc-sub: #838383, $ftc-active: #31c27c, $icon-color: #fff),
+  (name: theme, $bgc-main: #d43c33, $bgc-sub: #f5f5f5, $ftc-main: #333, $ftc-sub: #888, $ftc-active: #d43c33, $icon-color: #fff),
+  (name: theme1, $bgc-main: #31c27c, $bgc-sub: #f5f5f5, $ftc-main: #333, $ftc-sub: #888, $ftc-active: #31c27c, $icon-color: #fff),
   (name: theme2, $bgc-main: #333, $bgc-sub: #444, $ftc-main: #ddd, $ftc-sub: #aaa, $ftc-active: #fc3, $icon-color: #fc3),
 );
 

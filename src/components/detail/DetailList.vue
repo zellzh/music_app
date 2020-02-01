@@ -80,7 +80,7 @@ export default {
     }
     .item-right{
       margin-left: 20px;
-      font-size: 40px;
+      font-size: 55px;
       @include ftc-type($ftc-main);
     }
   }

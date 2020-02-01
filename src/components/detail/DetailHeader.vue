@@ -47,7 +47,7 @@ export default {
     align-items: center;
     @include bgc-type($bgc-main);
     .header-left, .header-right{
-      font-size: 50px;
+      font-size: 55px;
       color: #f3f3f3;
     }
     .header-title{

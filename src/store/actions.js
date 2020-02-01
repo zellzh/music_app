@@ -2,7 +2,11 @@ import {
   SET_NORMAL_PLAYER,
   SET_MINI_PLAYER,
   SET_LIST_PLAYER,
-  SET_PLAYER_TYPE
+  SET_PLAYER_TYPE,
+  SET_PLAYING,
+  SET_FAVORITE,
+  SET_PLAY_MODE,
+  SET_CURRENT_INDEX
 } from './mutations-type'
 
 export default {
@@ -17,5 +21,17 @@ export default {
   },
   setPlayerType ({ commit }, payload) {
     commit(SET_PLAYER_TYPE, payload)
+  },
+  setPlaying ({ commit }, payload) {
+    commit(SET_PLAYING, payload)
+  },
+  setFavorite ({ commit }, payload) {
+    commit(SET_FAVORITE, payload)
+  },
+  setPlayMode ({ commit }, payload) {
+    commit(SET_PLAY_MODE, payload)
+  },
+  setCurrentIndex ({ commit }, payload) {
+    commit(SET_CURRENT_INDEX, payload)
   }
 }

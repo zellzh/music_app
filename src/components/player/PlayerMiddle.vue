@@ -1,14 +1,13 @@
 <template>
   <section class="player-middle">
     <swiper :options="swiperOption" ref="mySwiper">
-      <!-- slides -->
       <swiper-slide class="cd">
-        <div class="cd-top">
+        <div class="cd-top" ref="disc">
           <img src="http://p1.music.126.net/iNZkyfe5KQ3vgb7nKY_d6w==/109951164428470125.jpg" alt="">
         </div>
         <div class="cd-bottom">
-          <div class="cd-like" @click="switchLike">
-            <svg-icon :icon-name="isLike" ref="icon"/>
+          <div class="cd-like" @click="switchFavorite">
+            <svg-icon :icon-name="isFond" ref="icon"/>
           </div>
           <p class="cd-lyric">就分段尚福林中中</p>
         </div>
@@ -77,6 +76,7 @@
 <script>
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import ScrollView from '../common/ScrollView(BScroll)'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'PlayerMiddle',
@@ -87,7 +87,7 @@ export default {
   },
   data () {
     return {
-      isLike: 'favorites',
+      isFond: '',
       swiperOption: {
         // 分页器
         pagination: {
@@ -102,13 +102,26 @@ export default {
       }
     }
   },
-  mounted () {
-
+  computed: {
+    ...mapState(['isPlaying', 'isFavorite'])
   },
   methods: {
-    switchLike () {
-      this.isLike = this.isLike === 'favorites' ? 'favorites_fill' : 'favorites'
+    ...mapActions(['setFavorite']),
+    switchFavorite () {
+      this.setFavorite(!this.isFavorite)
+      this.isFond = this.isFavorite ? 'favorites_fill' : 'favorites'
     }
+  },
+  watch: {
+    isPlaying (newVal) {
+      let discClass = this.$refs.disc.classList
+      newVal ? discClass.add('active') : discClass.remove('active')
+    }
+  },
+  mounted () {
+    let discClass = this.$refs.disc.classList
+    this.isPlaying ? discClass.add('active') : discClass.remove('active')
+    this.isFond = this.isFavorite ? 'favorites_fill' : 'favorites'
   }
 }
 </script>
@@ -132,7 +145,7 @@ export default {
         background: url("../../assets/images/player-disc.png") no-repeat;
         background-size: 100%;
         position: relative;
-        animation: spin 10s linear 0s;
+        animation: spin 15s linear 600ms infinite;
         animation-play-state: paused;
         img{
           width: 373px;
@@ -143,6 +156,9 @@ export default {
           top: 50%;
           transform: translate(-50%, -50%);
         }
+        &.active{
+          animation-play-state: running;
+        }
       }
       .cd-bottom{
         height: 200px;
@@ -151,21 +167,21 @@ export default {
           position: absolute;
           top: 0;
           right: 100px;
-          font-size: 60px;
-          color: #f3f3f3;
+          font-size: 65px;
+          color: #c3c3c3;
         }
         .cd-lyric{
           margin-top: 20px;
           padding-top: 100px;
           text-align: center;
-          color: #d3d3d3;
+          color: #c3c3c3;
           @include font-size($font-l)
         }
       }
     }
     .lyric{
       padding-bottom: 50px;
-      color: #737373;
+      color: #c3c3c3;
       text-align: center;
     }
   }
@@ -175,7 +191,7 @@ export default {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #fff;
+    background: #c3c3c3;
     &.my-bullet-active{
       width: 50px;
       border-radius: 20px;

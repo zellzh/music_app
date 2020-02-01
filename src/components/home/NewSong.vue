@@ -16,7 +16,7 @@
           </p>
         </div>
         <div class="item-right">
-          <svg-icon icon-name="play_s"/>
+          <svg-icon icon-name="play_f"/>
         </div>
       </li>
     </ul>
@@ -118,7 +118,7 @@ export default {
       }
       .item-right{
         margin-left: 30px;
-        font-size: 50px;
+        font-size: 60px;
         @include ftc-type($ftc-active);
       }
     }

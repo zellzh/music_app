@@ -34,10 +34,10 @@ export default {
   },
   methods: {
     enter (el, done) {
-      Velocity(el, 'transition.slideUpBigIn', { duration: 800, display: '' }, () => { done() })
+      Velocity(el, 'transition.slideUpBigIn', { duration: 600, display: '' }, () => { done() })
     },
     leave (el, done) {
-      Velocity(el, 'transition.slideDownBigOut', 800, () => { done() })
+      Velocity(el, 'transition.slideDownBigOut', 600, () => { done() })
     }
   }
 }

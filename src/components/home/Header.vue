@@ -42,9 +42,6 @@ export default {
       font-size: 65px;
       @include ftc-type($icon-color);
     }
-    .header-right{
-      font-size: 50px;
-    }
     .header-title{
       max-width: 550px;
       @include clamp-one();

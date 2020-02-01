@@ -14,13 +14,13 @@
       </div>
     </section>
     <section class="player-handle">
-      <div class="mode">
-        <svg-icon icon-name="loop_list"/>
+      <div class="mode" @click.stop="switchMode">
+        <svg-icon :icon-name="modeType"/>
       </div>
       <div class="prev">
         <svg-icon icon-name="prev"/>
       </div>
-      <div class="play" @click="switchPlay">
+      <div class="play" @click.stop="switchPlay">
         <svg-icon :icon-name="isPlay" ref="icon"/>
       </div>
       <div class="next">
@@ -34,16 +34,55 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+import modeType from '../../store/modeType'
+
 export default {
   name: 'PlayerFooter',
   data () {
     return {
-      isPlay: 'play'
+      isPlay: 'play',
+      modeType: ''
     }
   },
+  computed: {
+    ...mapState(['isPlaying', 'playMode'])
+  },
   methods: {
+    ...mapActions(['setPlaying', 'setPlayMode']),
     switchPlay () {
-      this.isPlay = this.isPlay === 'play' ? 'pause' : 'play'
+      this.setPlaying(!this.isPlaying)
+      this.isPlay = this.isPlaying ? 'pause' : 'play'
+    },
+    switchMode () {
+      switch (this.playMode) {
+        case modeType.loop:
+          this.setPlayMode(modeType.single)
+          this.modeType = 'single'
+          break
+        case modeType.single:
+          this.setPlayMode(modeType.shuffle)
+          this.modeType = 'shuffle'
+          break
+        case modeType.shuffle:
+          this.setPlayMode(modeType.loop)
+          this.modeType = 'loop'
+          break
+      }
+    }
+  },
+  mounted () {
+    this.isPlay = this.isPlaying ? 'pause' : 'play'
+    switch (this.playMode) {
+      case modeType.loop:
+        this.modeType = 'loop'
+        break
+      case modeType.single:
+        this.modeType = 'single'
+        break
+      case modeType.shuffle:
+        this.modeType = 'shuffle'
+        break
     }
   }
 }
@@ -66,14 +105,17 @@ export default {
         width: 100%;
         height: 100%;
         border-radius: 10px;
-        background: #737373;
+        background: #535353;
         .progress-line{
-          min-width: 10px; // 控制圆点不超出进度条
+
+          // 控制圆点不超出进度条
+          min-width: 10px;
           max-width: calc(100% - 10px);
+
           width: 50%;
           height: 100%;
           border-radius: 10px;
-          background: #fff;
+          background: #c3c3c3;
           position: relative;
           .progress-dot{
             display: inline-block;
@@ -92,7 +134,7 @@ export default {
     .time{
       display: flex;
       justify-content: space-between;
-      color: #737373;
+      color: #c3c3c3;
     }
   }
   .player-handle{
@@ -101,8 +143,8 @@ export default {
     align-items: center;
     width: 100%;
     height: 130px;
-    font-size: 60px;
-    color: #f3f3f3;
+    font-size: 65px;
+    color: #c3c3c3;
     .play{
       font-size: 100px;
     }
