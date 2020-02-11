@@ -16,30 +16,15 @@
       </div>
       <ScrollView>
         <ul class="scroll-content" ref="songList">
-          <li class="list-item" @click.stop="selectSong">
-            <div class="item-info">
-              <span class="item-title">轻微 </span>
-              <span class="item-artist"> - 塞宁</span>
-              <span class="playFlag" v-if="isPlaying">
-                <SvgIcon icon-name="play_line"/>
-              </span>
-            </div>
-            <div class="item-handle">
-              <div class="like">
-                <svg-icon icon-name="favorites"/>
+          <li class="list-item" @click.stop="selectSong(index)" v-for="(song, index) in playlist" :key="song.id">
+            <div class="item-left">
+              <div :class="{'item-info': true, active: curIndex === index}">
+                <span class="item-title">{{song.name}}</span>
+                <span class="item-artist"> - {{song.artist}}</span>
               </div>
-              <div class="delete">
-                <svg-icon icon-name="close"/>
-              </div>
-            </div>
-          </li>
-          <li class="list-item" @click.stop="selectSong">
-            <div class="item-info">
-              <span class="item-title">轻微 </span>
-              <span class="item-artist"> - 塞宁</span>
-              <span class="playFlag" v-if="isPlaying">
+              <div class="playing" v-if="curIndex === index">
                 <SvgIcon icon-name="play_line"/>
-              </span>
+              </div>
             </div>
             <div class="item-handle">
               <div class="like">
@@ -59,9 +44,9 @@
 
 <script>
 import ScrollView from '../common/ScrollView(BScroll)'
-import { mapActions, mapState } from 'vuex'
-import modeType from '../../store/modeType'
 import SvgIcon from '../icons/SvgIcon'
+import modeType from '../../store/modeType'
+import { mapActions, mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'ListPlayer',
@@ -73,12 +58,34 @@ export default {
     return {
       modeType: '',
       modeText: '',
-      playIndex: -1,
       items: []
     }
   },
+  computed: {
+    ...mapState(['isPlaying', 'playMode', 'curIndex', 'playlist']),
+    ...mapGetters(['curSong'])
+  },
+  mounted () {
+    this.initMode()
+  },
   methods: {
-    ...mapActions(['setPlayerType', 'setPlaying', 'setPlayMode', 'setCurrentIndex']),
+    ...mapActions(['setPlayerType', 'setPlaying', 'setPlayMode', 'setCurIndex', 'setCurLyric']),
+    initMode () {
+      switch (this.playMode) {
+        case modeType.loop:
+          this.modeType = 'loop'
+          this.modeText = '列表循环'
+          break
+        case modeType.single:
+          this.modeType = 'single'
+          this.modeText = '单曲循环'
+          break
+        case modeType.shuffle:
+          this.modeType = 'shuffle'
+          this.modeText = '随机播放'
+          break
+      }
+    },
     hideListPlayer () {
       this.setPlayerType('MiniPlayer')
     },
@@ -101,43 +108,12 @@ export default {
           break
       }
     },
-    selectSong (e) {
-      e.target.classList.add('active')
-      this.items.forEach((li, index) => {
-        if (li.classList.contains('active') && li !== e.target) li.classList.remove('active')
-        else if (li === e.target) {
-          this.setCurrentIndex(index)
-        }
-      })
-      this.setPlaying(true)
-    }
-  },
-  computed: {
-    ...mapState(['isPlaying', 'playMode', 'currentIndex'])
-  },
-  mounted () {
-    switch (this.playMode) {
-      case modeType.loop:
-        this.modeType = 'loop'
-        this.modeText = '列表循环'
-        break
-      case modeType.single:
-        this.modeType = 'single'
-        this.modeText = '单曲循环'
-        break
-      case modeType.shuffle:
-        this.modeType = 'shuffle'
-        this.modeText = '随机播放'
-        break
-    }
-    this.items = this.$refs.songList.childNodes
-    if (this.currentIndex >= 0) {
-      this.items[this.currentIndex].classList.add('active')
-      this.playIndex = this.currentIndex
+    selectSong (index) {
+      if (this.curIndex === index) return
+      this.setCurIndex(index)
+      this.setCurLyric(this.playlist[index].id)
     }
   }
-
-
 }
 </script>
 
@@ -188,37 +164,40 @@ export default {
           border-bottom: 1px solid #939393;
           display: flex;
           justify-content: space-between;
-          .item-info{
-            line-height: 99px;
-            .item-title{
-              @include ftc-type($ftc-main);
-              @include font-size($font-xl);
+          .item-left{
+            display: flex;
+            line-height: 100px;
+            overflow: hidden;
+            .item-info{
+              @include clamp-one();
+              .item-title{
+                @include ftc-type($ftc-main);
+                @include font-size($font-xl);
+              }
+              .item-artist{
+                @include ftc-type($ftc-sub);
+                @include font-size($font-l);
+              }
+              &.active{
+                .item-title, .item-artist{
+                  @include ftc-type($ftc-active);
+                }
+              }
             }
-            .item-artist{
-              @include ftc-type($ftc-sub);
-              @include font-size($font-l);
-            }
-            .playFlag{
+            .playing{
               margin-left: 10px;
               font-size: 50px;
-              vertical-align: top;
               @include ftc-type($ftc-active)
             }
           }
           .item-handle{
             display: flex;
             line-height: 100px;
+            margin-left: 20px;
             font-size: 50px;
             color: #939393;
             .delete{
               margin-left: 20px;
-            }
-          }
-          &.active{
-            .item-info{
-              .item-title, .item-artist{
-                @include ftc-type($ftc-active);
-              }
             }
           }
         }

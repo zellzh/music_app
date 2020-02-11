@@ -1,37 +1,37 @@
-import {
-  SET_NORMAL_PLAYER,
-  SET_MINI_PLAYER,
-  SET_LIST_PLAYER,
-  SET_PLAYER_TYPE,
-  SET_PLAYING,
-  SET_FAVORITE,
-  SET_PLAY_MODE,
-  SET_CURRENT_INDEX
-} from './mutations-type'
+import types from './mutations-type'
 
 export default {
-  [SET_NORMAL_PLAYER] (state, payload) {
+  /*
+  [types.SET_NORMAL_PLAYER] (state, payload) {
     state.showNormalPlayer = payload
   },
-  [SET_MINI_PLAYER] (state, payload) {
+  [types.SET_MINI_PLAYER] (state, payload) {
     state.showMiniPlayer = payload
   },
-  [SET_LIST_PLAYER] (state, payload) {
+  [types.SET_LIST_PLAYER] (state, payload) {
     state.showListPlayer = payload
   },
-  [SET_PLAYER_TYPE] (state, payload) {
-    state.playerType = payload
+   */
+
+  [types.SET_PLAYER_TYPE] (state, player) {
+    state.playerType = player
   },
-  [SET_PLAYING] (state, payload) {
-    state.isPlaying = payload
+  [types.SET_PLAYING] (state, boolean) {
+    state.isPlaying = boolean
   },
-  [SET_FAVORITE] (state, payload) {
-    state.isFavorite = payload
+  [types.SET_FAVORITE] (state, boolean) {
+    state.isFavorite = boolean
   },
-  [SET_PLAY_MODE] (state, payload) {
-    state.playMode = payload
+  [types.SET_PLAY_MODE] (state, modetypes) {
+    state.playMode = modetypes
   },
-  [SET_CURRENT_INDEX] (state, payload) {
-    state.currentIndex = payload
+  [types.SET_CUR_INDEX] (state, num) {
+    state.curIndex = num
+  },
+  [types.SET_PLAYLIST] (state, arr) {
+    state.playlist = arr
+  },
+  [types.SET_CUR_LYRIC] (state, obj) {
+    state.curLyric = obj
   }
 }

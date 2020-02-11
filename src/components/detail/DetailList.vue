@@ -1,6 +1,6 @@
 <template>
     <ul class="detail-list">
-      <li class="list-item" v-for="(value, index) in songlist" :key="value.id" @click="showPlayer">
+      <li class="list-item" v-for="(value, index) in songlist" :key="value.id" @click.stop="selectSong(index)">
         <div class="item-left">
           <p class="item-song">{{value.name}}</p>
           <p class="item-artist">{{artists[index]}}</p>
@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-
 export default {
   name: 'DetailList',
   props: {
@@ -24,12 +22,6 @@ export default {
       required: true
     }
   },
-  methods: {
-    ...mapActions(['setPlayerType']),
-    showPlayer () {
-      this.setPlayerType('NormalPlayer')
-    }
-  },
   computed: {
     // 格式化歌手
     artists () {
@@ -37,10 +29,9 @@ export default {
       this.songlist.forEach(item => {
         if (item.ar.length > 1) {
           let formatArtist = ''
-          item.ar.forEach(value => {
-            formatArtist += value.name + '/'
+          item.ar.forEach((value, index) => {
+            formatArtist += index === 0 ? value.name : '/' + value.name
           })
-          formatArtist = formatArtist.slice(0, formatArtist.lastIndexOf('/'))
           formatArtist += ' - ' + item.al.name
           artists.push(formatArtist)
         } else {
@@ -48,6 +39,11 @@ export default {
         }
       })
       return artists
+    }
+  },
+  methods: {
+    selectSong (selectIndex) {
+      this.$emit('selectAll', selectIndex)
     }
   }
 }

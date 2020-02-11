@@ -11,6 +11,7 @@
       @leave="leave">
       <component :is="playerType"/>
     </transition>
+    <audio :src="curSong.url"/>
   </section>
 </template>
 
@@ -18,7 +19,7 @@
 import NormalPlayer from '../components/player/NormalPlayer'
 import MiniPlayer from '../components/player/MiniPlayer'
 import ListPlayer from '../components/player/ListPlayer'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import Velocity from 'velocity-animate'
 import 'velocity-animate/velocity.ui.min'
 
@@ -30,7 +31,8 @@ export default {
     ListPlayer
   },
   computed: {
-    ...mapState(['playerType'])
+    ...mapState(['playerType']),
+    ...mapGetters(['curSong'])
   },
   methods: {
     enter (el, done) {

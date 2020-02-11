@@ -105,7 +105,7 @@ export default {
         width: 100%;
         height: 100%;
         border-radius: 10px;
-        background: #535353;
+        background: #777;
         .progress-line{
 
           // 控制圆点不超出进度条
@@ -115,7 +115,7 @@ export default {
           width: 50%;
           height: 100%;
           border-radius: 10px;
-          background: #c3c3c3;
+          background: #ddd;
           position: relative;
           .progress-dot{
             display: inline-block;
@@ -134,7 +134,7 @@ export default {
     .time{
       display: flex;
       justify-content: space-between;
-      color: #c3c3c3;
+      color: #999;
     }
   }
   .player-handle{
@@ -144,7 +144,7 @@ export default {
     width: 100%;
     height: 130px;
     font-size: 65px;
-    color: #c3c3c3;
+    color: #ddd;
     .play{
       font-size: 100px;
     }

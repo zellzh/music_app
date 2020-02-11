@@ -3,11 +3,11 @@
     <swiper :options="swiperOption" ref="mySwiper">
       <swiper-slide class="cd">
         <div class="cd-top" ref="disc">
-          <img src="http://p1.music.126.net/iNZkyfe5KQ3vgb7nKY_d6w==/109951164428470125.jpg" alt="">
+          <img class="cd-cover" :src="curSong.picUrl" alt="">
         </div>
         <div class="cd-bottom">
-          <div class="cd-like" @click="switchFavorite">
-            <svg-icon :icon-name="isFond" ref="icon"/>
+          <div class="cd-favorite" @click="switchFavorite">
+            <svg-icon :icon-name="favoriteName"/>
           </div>
           <p class="cd-lyric">就分段尚福林中中</p>
         </div>
@@ -15,56 +15,12 @@
       <swiper-slide class="lyric">
         <ScrollView>
           <ul class="scroll-content">
-            <li>第1个li</li>
-            <li>第2个li</li>
-            <li>第3个li</li>
-            <li>第4个li</li>
-            <li>第5个li</li>
-            <li>第6个li</li>
-            <li>第7个li</li>
-            <li>第8个li</li>
-            <li>第9个li</li>
-            <li>第10个li</li>
-            <li>第11个li</li>
-            <li>第12个li</li>
-            <li>第13个li</li>
-            <li>第14个li</li>
-            <li>第15个li</li>
-            <li>第16个li</li>
-            <li>第17个li</li>
-            <li>第18个li</li>
-            <li>第19个li</li>
-            <li>第20个li</li>
-            <li>第21个li</li>
-            <li>第22个li</li>
-            <li>第23个li</li>
-            <li>第24个li</li>
-            <li>第25个li</li>
-            <li>第26个li</li>
-            <li>第27个li</li>
-            <li>第28个li</li>
-            <li>第29个li</li>
-            <li>第30个li</li>
-            <li>第31个li</li>
-            <li>第32个li</li>
-            <li>第33个li</li>
-            <li>第34个li</li>
-            <li>第35个li</li>
-            <li>第36个li</li>
-            <li>第37个li</li>
-            <li>第38个li</li>
-            <li>第39个li</li>
-            <li>第40个li</li>
-            <li>第41个li</li>
-            <li>第42个li</li>
-            <li>第43个li</li>
-            <li>第44个li</li>
-            <li>第45个li</li>
-            <li>第46个li</li>
-            <li>第47个li</li>
-            <li>第48个li</li>
-            <li>第49个li</li>
-            <li>第50个li</li>
+            <li class="noLrc" v-if="noLyric">暂时没有歌词,（。・＿・。）ﾉ</li>
+            <li class="fixedLrc" v-if="fixedLrc">*该歌词不支持自动滚动*</li>
+            <li v-for="(lrc, key) in curLyric.lrcObj" :key="key">
+              <p>{{lrc}}</p>
+              <p v-if="curLyric.tlrcObj">{{curLyric.tlrcObj[key]}}</p>
+            </li>
           </ul>
         </ScrollView>
       </swiper-slide>
@@ -76,7 +32,7 @@
 <script>
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import ScrollView from '../common/ScrollView(BScroll)'
-import { mapState, mapActions } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'PlayerMiddle',
@@ -87,7 +43,7 @@ export default {
   },
   data () {
     return {
-      isFond: '',
+      favoriteName: '',
       swiperOption: {
         // 分页器
         pagination: {
@@ -103,25 +59,35 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isPlaying', 'isFavorite'])
+    ...mapState(['isPlaying', 'isFavorite', 'curLyric']),
+    ...mapGetters(['curSong']),
+    fixedLrc () { // 不支持滚动的歌词
+      return this.curLyric.lrcObj instanceof Array
+    },
+    noLyric () { // 没有歌词
+      return this.curLyric.lrcObj ? Object.keys(this.curLyric.lrcObj).length === 0 : false
+    }
   },
   methods: {
-    ...mapActions(['setFavorite']),
+    ...mapActions(['setFavorite', 'setCurLyric']),
     switchFavorite () {
       this.setFavorite(!this.isFavorite)
-      this.isFond = this.isFavorite ? 'favorites_fill' : 'favorites'
+      this.favoriteName = this.isFavorite ? 'favorites_fill' : 'favorites'
     }
   },
   watch: {
     isPlaying (newVal) {
       let discClass = this.$refs.disc.classList
       newVal ? discClass.add('active') : discClass.remove('active')
+    },
+    curSong (newVal) {
+      this.setCurLyric(newVal.id)
     }
   },
   mounted () {
     let discClass = this.$refs.disc.classList
     this.isPlaying ? discClass.add('active') : discClass.remove('active')
-    this.isFond = this.isFavorite ? 'favorites_fill' : 'favorites'
+    this.favoriteName = this.isFavorite ? 'favorites_fill' : 'favorites'
   }
 }
 </script>
@@ -147,14 +113,26 @@ export default {
         position: relative;
         animation: spin 15s linear 600ms infinite;
         animation-play-state: paused;
-        img{
+        .cd-cover{
           width: 373px;
           height: 373px;
           border-radius: 50%;
+          overflow: hidden;
           position: absolute;
           left: 50%;
           top: 50%;
           transform: translate(-50%, -50%);
+
+          // 图片水平居中
+          object-fit: cover;
+          /*
+          text-align: center;
+          img{
+            width: 100%;
+            height: 100%;
+            margin: auto -100%;
+          }
+           */
         }
         &.active{
           animation-play-state: running;
@@ -163,26 +141,34 @@ export default {
       .cd-bottom{
         height: 200px;
         position: relative;
-        .cd-like{
+        .cd-favorite{
           position: absolute;
           top: 0;
           right: 100px;
           font-size: 65px;
-          color: #c3c3c3;
+          color: #ddd;
         }
         .cd-lyric{
           margin-top: 20px;
           padding-top: 100px;
           text-align: center;
-          color: #c3c3c3;
+          color: #ccc;
           @include font-size($font-l)
         }
       }
     }
     .lyric{
       padding-bottom: 50px;
-      color: #c3c3c3;
+      color: #ccc;
       text-align: center;
+      .scroll-content{
+        padding: 50% 70px;
+        li{
+          padding: 15px 0;
+          @include font-size($font-l);
+          word-break: keep-all;
+        }
+      }
     }
   }
   ::v-deep .my-bullet{
@@ -191,7 +177,7 @@ export default {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #c3c3c3;
+    background: #ccc;
     &.my-bullet-active{
       width: 50px;
       border-radius: 20px;

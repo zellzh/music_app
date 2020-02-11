@@ -6,8 +6,8 @@
         </div>
         <div class="info" ref="infoView">
           <div class="info-wrapper" ref="infoWrapper">
-            <p class="info-text" ref="infoText">赛赛-懂得积分段看官等奖怪防晒粉的</p>
-            <p class="info-text" v-if="isDual">赛赛-懂得</p>
+            <p class="info-text" ref="infoText">{{curSong.name}} - {{curSong.artist}}</p>
+            <p class="info-text" v-if="isDual">{{curSong.name}} - {{curSong.artist}}</p>
           </div>
         </div>
       </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'MiniPlayer',
@@ -35,6 +35,7 @@ export default {
   },
   computed: {
     ...mapState(['isPlaying']),
+    ...mapGetters(['curSong']),
     viewWidth () {
       return this.$refs.infoView.offsetWidth
     },
@@ -55,8 +56,11 @@ export default {
     infoScroll () {
       if (this.textWidth > this.viewWidth) {
         this.isDual = true
+        let totalWidth = this.textWidth + this.viewWidth
         this.$refs.infoText.style.paddingRight = this.viewWidth + 'px'
-        this.$refs.infoWrapper.style.left = -this.textWidth - this.viewWidth + 'px'
+        this.$refs.infoWrapper.style.left = -totalWidth + 'px'
+        // 匀速效果
+        this.$refs.infoWrapper.style.transitionDuration = totalWidth / 80 + 's'
       }
     },
 
@@ -138,7 +142,7 @@ export default {
         position: absolute;
         left: 0;
         top: 0;
-        transition: left 15s linear 600ms;
+        transition: left 0s linear 600ms;
         .info-text{
           display: inline-block;
           padding-left: 10px; // 边界模糊优化

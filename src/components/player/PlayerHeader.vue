@@ -1,23 +1,23 @@
 <template>
     <header class="player-header">
-      <div class="header-left" @click="switchPlayer">
+      <div class="header-left" @click.stop="switchPlayer">
         <svg-icon iconName="down"/>
       </div>
       <div class="header-info">
-        <h3 class="header-title">光年之外</h3>
-        <p class="header-artist">邓紫棋</p>
+        <h3 class="header-title">{{curSong.name}}</h3>
+        <p class="header-artist">{{curSong.artist}}</p>
       </div>
       <div class="header-right"></div>
     </header>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Header',
-  props: {
-
+  computed: {
+    ...mapGetters(['curSong'])
   },
   methods: {
     ...mapActions(['setPlayerType']),
@@ -39,19 +39,23 @@ export default {
     .header-left, .header-right{
       width: 55px;
       font-size: 55px;
-      color: #c3c3c3;
+      color: #f3f3f3;
     }
     .header-info{
-      max-width: 550px;
       flex: 1;
-      overflow: hidden;
+      padding: 0 30px;
       text-align: center;
-      @include clamp-one();
-      @include font-size($font-xl);
-      color: #f3f3f3;
+      overflow: hidden;
+      .header-title{
+        letter-spacing: 1px;
+        color: #fff;
+        @include clamp-one();
+        @include font-size($font-xl);
+      }
       .header-artist{
-        padding-top: 5px;
-        color: #a3a3a3;
+        padding-top: 10px;
+        color: #ddd;
+        @include clamp-one();
         @include font-size($font-l);
       }
     }

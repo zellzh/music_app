@@ -1,11 +1,11 @@
 <template>
   <section class="detail">
-    <DetailHeader :title="playlist.name" :scroll="{innerScroll, outerScroll}"/>
+    <DetailHeader :title="albumDetail.name" :scroll="{innerScroll, outerScroll}"/>
     <div class="outer-scroll" ref="outerScroll">
       <div class="scroll-content">
-        <DetailInfo :imgUrl="playlist.coverImgUrl" ref="info"/>
+        <DetailInfo :imgUrl="albumDetail.coverImgUrl" ref="info"/>
         <section class="detail-bottom">
-          <div class="list-header">
+          <div class="list-header" @click.stop="selectAll(0)">
             <div class="header-left">
               <svg-icon icon-name="play_s"/>
               <span>播放全部</span>
@@ -13,7 +13,7 @@
             <div class="header-right"></div>
           </div>
           <div class="inner-scroll" ref="innerScroll">
-            <DetailList :songlist="playlist.tracks" ref="list"/>
+            <DetailList @selectAll="selectAll" :songlist="albumDetail.tracks"/>
           </div>
         </section>
       </div>
@@ -22,13 +22,14 @@
 </template>
 
 <script>
-import api from '../api'
+import { getPersonalizedDetail, getAlbumDetail } from '../api'
 import DetailHeader from '../components/detail/DetailHeader'
 import DetailInfo from '../components/detail/DetailInfo'
 import DetailList from '../components/detail/DetailList'
 import BScroll from '@better-scroll/core'
 import NestedScroll from '@better-scroll/nested-scroll'
 import ObserveDOM from '@better-scroll/observe-dom'
+import { mapState, mapActions } from 'vuex'
 
 BScroll.use(ObserveDOM)
 BScroll.use(NestedScroll)
@@ -42,7 +43,7 @@ export default {
   },
   data () {
     return {
-      playlist: {},
+      albumDetail: {},
       outerScroll: null,
       innerScroll: null
     }
@@ -51,16 +52,16 @@ export default {
   created () {
     switch (this.type) {
       case 'personalized': // 推荐歌单详情
-        api.getPersonalizedDetail(this.id).then(data => {
+        getPersonalizedDetail(this.id).then(data => {
           if (data) {
-            this.playlist = data.playlist
+            this.albumDetail = data.playlist
           }
         })
         break
-      case 'album': // 最新专辑详情
-        api.getAlbumDetail(this.id).then(data => {
+      case 'album': // 最新专辑内容
+        getAlbumDetail(this.id).then(data => {
           if (data) {
-            this.playlist = {
+            this.albumDetail = {
               name: data.album.name,
               coverImgUrl: data.album.picUrl,
               tracks: data.songs
@@ -74,7 +75,21 @@ export default {
     this.initScroll()
     this.scrollEffect()
   },
+  computed: {
+    ...mapState(['playlist', 'curIndex'])
+  },
   methods: {
+    ...mapActions(['setPlaylist', 'setPlayerType', 'setCurIndex']),
+    async selectAll (selectIndex) {
+      this.setPlayerType('NormalPlayer')
+      if (this.curIndex !== selectIndex) this.setCurIndex(selectIndex)
+      let ids = this.albumDetail.tracks.map(item => item.id)
+      if (this.playlist.length > 0) {
+        let temp = this.playlist.map(item => item.id)
+        if (ids.every((value, index) => value === temp[index])) return // 同playlist不重复请求
+      }
+      this.setPlaylist(ids)
+    },
     // BS初始化
     initScroll () {
       // outer
@@ -90,7 +105,7 @@ export default {
       // inner
       this.innerScroll = new BScroll(this.$refs.innerScroll, {
         nestedScroll: true,
-        probeType: 2,
+        probeType: 3,
         observeDOM: true,
         // click: true,
         bounce: {
@@ -100,6 +115,8 @@ export default {
     },
     // 滚动效果
     scrollEffect () {
+      /*
+      (边界滚动会引起点击bug, 并且性能不好, 不使用)
       // 监听上拉: 范围内, 内层禁用, 启用外层; 范围外反之
       // 内层滚动之前, 外层能滚动, 禁用内层
       this.innerScroll.on('beforeScrollStart', pos => {
@@ -114,16 +131,17 @@ export default {
           this.outerScroll.enable()
         }
       })
-      // 外层混动之前, 内层有滚动, 禁用外层
-      this.outerScroll.on('beforeScrollStart', pos => {
-        if (this.innerScroll.y !== 0) {
-          this.outerScroll.disable()
-          this.innerScroll.enable()
-        } else {
-          this.outerScroll.enable()
-        }
-      })
-      // 边界滚动 & 下拉
+      // 外层混动之前, 内层有滚动时禁用内层
+      // this.outerScroll.on('scrollStart', pos => {
+      //   if (this.innerScroll.y !== 0) {
+      //     this.outerScroll.disable()
+      //     this.innerScroll.enable()
+      //   } else {
+      //     this.outerScroll.enable()
+      //   }
+      // })
+
+      // 边界滚动 & 下拉放大
       let imgHeight = this.$refs.info.$el.offsetHeight
       this.outerScroll.on('scroll', pos => { // 内层有滚动时: 外层到达边界, 启动内层 --- (上拉)
         if (pos.y === this.outerScroll.maxScrollY && this.outerScroll.movingDirectionY === 1 && this.innerScroll.maxScrollY !== 0) {
@@ -145,6 +163,39 @@ export default {
         if (pos.y === 0 && this.innerScroll.movingDirectionY === -1 && this.innerScroll.maxScrollY !== 0) {
           this.outerScroll.enable()
           this.innerScroll.disable()
+        }
+      })
+      // this.innerScroll.on('scrollEnd', () => {
+      //   this.outerScroll.enable()
+      // })
+    }
+       */
+
+      // 去除边界滚动
+      // 内层滚动开始之前, 外层还未滚动完, 禁用内层; 否则启用内层
+      this.innerScroll.on('beforeScrollStart', pos => {
+        if (this.outerScroll.y === this.outerScroll.maxScrollY && this.innerScroll.maxScrollY !== 0) {
+          this.outerScroll.disable()
+          this.innerScroll.enable()
+
+          // 解决真机内层click事件失效的bug
+          this.innerScroll.options.click = true
+        } else {
+          this.outerScroll.enable()
+          this.innerScroll.disable()
+
+          // 解决真机内层click事件失效的bug
+          this.innerScroll.options.click = false
+        }
+      })
+
+      // 下拉放大图片
+      let imgHeight = this.$refs.info.$el.offsetHeight
+      this.outerScroll.on('scroll', pos => {
+        if (pos.y > 0) {
+          // 下拉图片放大
+          let scale = pos.y / imgHeight + 1
+          this.$refs.info.$el.style.transform = `scale(${scale})`
         }
       })
     }

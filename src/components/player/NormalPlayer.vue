@@ -4,7 +4,7 @@
     <PlayerMiddle/>
     <PlayerFooter/>
     <div class="bg">
-      <img src="http://p1.music.126.net/NhEWxfUZrrd4oMMqbKKIOA==/109951164466565583.jpg" alt="">
+      <img :src="curSong.picUrl" alt="">
       <div class="bg-mask"/>
     </div>
   </section>
@@ -14,6 +14,7 @@
 import PlayerHeader from './PlayerHeader'
 import PlayerMiddle from './PlayerMiddle'
 import PlayerFooter from './PlayerFooter'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'NormalPlayer',
@@ -21,6 +22,9 @@ export default {
     PlayerHeader,
     PlayerMiddle,
     PlayerFooter
+  },
+  computed: {
+    ...mapGetters(['curSong'])
   }
 }
 </script>
@@ -44,13 +48,13 @@ export default {
     img{
       margin: 0 -100%;
       height: 100%;
-      filter: blur(20px);
+      filter: blur(60px);
       transform: scale(1.2); // 去除白边
     }
     .bg-mask{
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, .3);
+      background: rgba(50, 50, 0, .4);
       position: fixed;
       top: 0;
       left: 0;

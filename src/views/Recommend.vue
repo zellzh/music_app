@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import api from '../api'
+import { getBanner, getPersonalized, getNewAlbum, getNewSong } from '../api'
 import ScrollView from '../components/common/ScrollView(BScroll)'
 // import ScrollView from '../components/common/ScrollView(IScroll)'
 // import Banner from '../components/common/Banner(BScroll)'
@@ -46,10 +46,10 @@ export default {
     }
   },
   created () {
-    api.getBanner().then(data => { if (data) this.banners = data.banners })
-    api.getPersonalized().then(data => { if (data) this.personalized = data.result })
-    api.getNewAlbum().then(data => { if (data) this.album = data.albums.slice(0, 6) })
-    api.getNewSong().then(data => { if (data) this.songs = data.result })
+    getBanner().then(data => { if (data) this.banners = data.banners })
+    getPersonalized().then(data => { if (data) this.personalized = data.result })
+    getNewAlbum().then(data => { if (data) this.album = data.albums.slice(0, 6) })
+    getNewSong().then(data => { if (data) this.songs = data.result })
   }
 }
 </script>
