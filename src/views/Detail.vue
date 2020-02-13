@@ -3,7 +3,7 @@
     <DetailHeader :title="albumDetail.name" :scroll="{innerScroll, outerScroll}"/>
     <div class="outer-scroll" ref="outerScroll">
       <div class="scroll-content">
-        <DetailInfo :imgUrl="albumDetail.coverImgUrl" ref="info"/>
+        <DetailInfo :imgUrl="albumDetail.coverImgUrl" ref="cover"/>
         <section class="detail-bottom">
           <div class="list-header" @click.stop="selectAll(0)">
             <div class="header-left">
@@ -22,13 +22,13 @@
 </template>
 
 <script>
-import { getPersonalizedDetail, getAlbumDetail } from '../api'
 import DetailHeader from '../components/detail/DetailHeader'
 import DetailInfo from '../components/detail/DetailInfo'
 import DetailList from '../components/detail/DetailList'
 import BScroll from '@better-scroll/core'
 import NestedScroll from '@better-scroll/nested-scroll'
 import ObserveDOM from '@better-scroll/observe-dom'
+import { getPersonalizedDetail, getAlbumDetail } from '../api'
 import { mapState, mapActions } from 'vuex'
 
 BScroll.use(ObserveDOM)
@@ -112,64 +112,8 @@ export default {
     },
     // 滚动效果
     scrollEffect () {
-      /*
-      (边界滚动会引起点击bug, 并且性能不好, 不使用)
-      // 监听上拉: 范围内, 内层禁用, 启用外层; 范围外反之
-      // 内层滚动之前, 外层能滚动, 禁用内层
-      this.innerScroll.on('beforeScrollStart', pos => {
-        if (this.outerScroll.y <= 0 && this.outerScroll.y > this.outerScroll.maxScrollY) {
-          this.innerScroll.disable()
-          this.outerScroll.enable()
-        } else if (this.outerScroll.y > 0) { // 防止下拉外层卡住导致bug
-          this.outerScroll.enable()
-          this.outerScroll.scrollTo(0, 0)
-        }
-        if (this.innerScroll.maxScrollY === 0) { // 内层无滚动时, 外层滚动
-          this.outerScroll.enable()
-        }
-      })
-      // 外层混动之前, 内层有滚动时禁用内层
-      // this.outerScroll.on('scrollStart', pos => {
-      //   if (this.innerScroll.y !== 0) {
-      //     this.outerScroll.disable()
-      //     this.innerScroll.enable()
-      //   } else {
-      //     this.outerScroll.enable()
-      //   }
-      // })
-
-      // 边界滚动 & 下拉放大
-      let imgHeight = this.$refs.info.$el.offsetHeight
-      this.outerScroll.on('scroll', pos => { // 内层有滚动时: 外层到达边界, 启动内层 --- (上拉)
-        if (pos.y === this.outerScroll.maxScrollY && this.outerScroll.movingDirectionY === 1 && this.innerScroll.maxScrollY !== 0) {
-          this.outerScroll.disable()
-          this.innerScroll.enable()
-
-          // 解决移动端真机内层click事件失效的bug
-          this.innerScroll.options.click = true
-        } else if (pos.y > 0) {
-          // 下拉图片放大
-          let scale = pos.y / imgHeight + 1
-          this.$refs.info.$el.style.transform = `scale(${scale})`
-        } else {
-          // 解决移动端真机内层click事件失效的bug
-          this.innerScroll.options.click = false
-        }
-      })
-      this.innerScroll.on('scroll', pos => { // 内层有滚动时: 内层到达边界, 启动外层 --- (下拉)
-        if (pos.y === 0 && this.innerScroll.movingDirectionY === -1 && this.innerScroll.maxScrollY !== 0) {
-          this.outerScroll.enable()
-          this.innerScroll.disable()
-        }
-      })
-      // this.innerScroll.on('scrollEnd', () => {
-      //   this.outerScroll.enable()
-      // })
-    }
-       */
-
       // 去除边界滚动
-      // 内层滚动开始之前, 外层还未滚动完, 禁用内层; 否则启用内层
+      // 内层滚动开始之前, 外层未滚动完, 禁用内层; 否则启用内层
       this.innerScroll.on('beforeScrollStart', pos => {
         if (this.outerScroll.y === this.outerScroll.maxScrollY && this.innerScroll.maxScrollY !== 0) {
           this.outerScroll.disable()
@@ -187,12 +131,12 @@ export default {
       })
 
       // 下拉放大图片
-      let imgHeight = this.$refs.info.$el.offsetHeight
+      let coverObj = this.$refs.cover.$el
       this.outerScroll.on('scroll', pos => {
         if (pos.y > 0) {
           // 下拉图片放大
-          let scale = pos.y / imgHeight + 1
-          this.$refs.info.$el.style.transform = `scale(${scale})`
+          let scale = pos.y / coverObj.offsetHeight + 1
+          coverObj.style.transform = `scale(${scale})`
         }
       })
     }
@@ -201,14 +145,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  /*
-  BUG记录:
-    - 移动端真机有`状态栏` / `工具栏` / '标签栏' 等, 可能会挡住底部内容
-
-  解决办法:
-    - 利用视口单位 vh / vw
-    - 有些浏览器视口包含搜索栏等, 暂时无法解决
-   */
 .detail{
   position: fixed;
   top: 0;
