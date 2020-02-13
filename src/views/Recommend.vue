@@ -46,10 +46,10 @@ export default {
     }
   },
   created () {
-    getBanner().then(data => { if (data) this.banners = data.banners })
-    getPersonalized().then(data => { if (data) this.personalized = data.result })
-    getNewAlbum().then(data => { if (data) this.album = data.albums.slice(0, 6) })
-    getNewSong().then(data => { if (data) this.songs = data.result })
+    getBanner().then(data => { data && (this.banners = data.banners) })
+    getPersonalized().then(data => { data && (this.personalized = data.result) })
+    getNewAlbum().then(data => { data && (this.album = data.albums.slice(0, 6)) })
+    getNewSong().then(data => { data && (this.songs = data.result) })
   }
 }
 </script>

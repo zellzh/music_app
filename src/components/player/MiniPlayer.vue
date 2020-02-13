@@ -1,8 +1,8 @@
 <template>
-  <section class="mini-player" ref="miniPlayer">
-      <div class="mini-left" @click="showNormalPlayer">
+  <section class="mini-player">
+      <div class="mini-left" @click="switchPlayer(playerType.normal)">
         <div class="cover">
-          <img ref="disc" src="http://p1.music.126.net/iNZkyfe5KQ3vgb7nKY_d6w==/109951164428470125.jpg" alt="">
+          <img :class="{active: isPlaying}" :src="curSong.picUrl" alt="">
         </div>
         <div class="info" ref="infoView">
           <div class="info-wrapper" ref="infoWrapper">
@@ -12,10 +12,10 @@
         </div>
       </div>
       <div class="mini-right">
-        <div class="play" @click="switchPlay">
-          <svg-icon :icon-name="isPlay" ref="icon"/>
+        <div class="play" @click="switchPlaying">
+          <svg-icon :icon-name="isPlaying ? 'pause_s' : 'play_s'"/>
         </div>
-        <div class="list" @click="showListPlayer">
+        <div class="list" @click="switchPlayer(playerType.list)">
           <svg-icon icon-name="play_list"/>
         </div>
       </div>
@@ -24,13 +24,14 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
+import playerType from '../../store/playerType'
 
 export default {
   name: 'MiniPlayer',
   data () {
     return {
       isDual: false, // 滚动处理
-      isPlay: ''
+      playerType: playerType
     }
   },
   computed: {
@@ -45,40 +46,25 @@ export default {
   },
   mounted () {
     this.infoScroll()
-
-    this.isPlay = this.isPlaying ? 'pause_s' : 'play_s'
-    let discClass = this.$refs.disc.classList
-    this.isPlaying ? discClass.add('active') : discClass.remove('active')
   },
   methods: {
     ...mapActions(['setPlayerType', 'setPlaying']),
-    // 超出宽度滚动
+    // 文字滚动
     infoScroll () {
       if (this.textWidth > this.viewWidth) {
         this.isDual = true
-        let totalWidth = this.textWidth + this.viewWidth
+        let scrollX = this.textWidth + this.viewWidth
         this.$refs.infoText.style.paddingRight = this.viewWidth + 'px'
-        this.$refs.infoWrapper.style.left = -totalWidth + 'px'
+        this.$refs.infoWrapper.style.left = -scrollX + 'px'
         // 匀速效果
-        this.$refs.infoWrapper.style.transitionDuration = totalWidth / 80 + 's'
+        this.$refs.infoWrapper.style.transitionDuration = scrollX / 80 + 's'
       }
     },
-
-    switchPlay () {
+    switchPlaying () {
       this.setPlaying(!this.isPlaying)
-      this.isPlay = this.isPlaying ? 'pause_s' : 'play_s'
     },
-    showNormalPlayer () {
-      this.setPlayerType('NormalPlayer')
-    },
-    showListPlayer () {
-      this.setPlayerType('ListPlayer')
-    }
-  },
-  watch: {
-    isPlaying (newVal) {
-      let discClass = this.$refs.disc.classList
-      newVal ? discClass.add('active') : discClass.remove('active')
+    switchPlayer (type) {
+      this.setPlayerType(type)
     }
   }
 }
@@ -112,7 +98,7 @@ export default {
         width: 100%;
         height: 100%;
         border-radius: 50%;
-        animation: spin 15s linear 600ms infinite;
+        animation: spin 15s linear 700ms infinite;
         animation-play-state: paused;
         &.active{
           animation-play-state: running;

@@ -3,10 +3,12 @@
     <div class="list-player-wrapper">
       <div class="list-header">
         <div class="header-left" @click.stop="switchMode">
-          <div class="loop-mode">
-            <svg-icon :icon-name="modeType"/>
+          <div class="play-mode">
+            <svg-icon :icon-name="playMode"/>
           </div>
-          <span>{{modeText}}</span>
+          <span v-if="playMode === modeType.loop">列表循环</span>
+          <span v-else-if="playMode === modeType.single">单曲循环</span>
+          <span v-else>随机播放</span>
         </div>
         <div class="header-right">
           <div class="clear">
@@ -15,14 +17,14 @@
         </div>
       </div>
       <ScrollView>
-        <ul class="scroll-content" ref="songList">
+        <ul class="scroll-content">
           <li class="list-item" @click.stop="selectSong(index)" v-for="(song, index) in playlist" :key="song.id">
             <div class="item-left">
               <div :class="{'item-info': true, active: curIndex === index}">
                 <span class="item-title">{{song.name}}</span>
                 <span class="item-artist"> - {{song.artist}}</span>
               </div>
-              <div class="playing" v-if="curIndex === index">
+              <div class="playing" v-if="curIndex === index && isPlaying">
                 <SvgIcon icon-name="play_line"/>
               </div>
             </div>
@@ -46,7 +48,8 @@
 import ScrollView from '../common/ScrollView(BScroll)'
 import SvgIcon from '../icons/SvgIcon'
 import modeType from '../../store/modeType'
-import { mapActions, mapState, mapGetters } from 'vuex'
+import playerType from '../../store/playerType'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'ListPlayer',
@@ -56,62 +59,34 @@ export default {
   },
   data () {
     return {
-      modeType: '',
-      modeText: '',
+      modeType: modeType,
       items: []
     }
   },
   computed: {
-    ...mapState(['isPlaying', 'playMode', 'curIndex', 'playlist']),
-    ...mapGetters(['curSong'])
-  },
-  mounted () {
-    this.initMode()
+    ...mapState(['playMode', 'isPlaying', 'curIndex', 'playlist'])
   },
   methods: {
-    ...mapActions(['setPlayerType', 'setPlaying', 'setPlayMode', 'setCurIndex', 'setCurLyric']),
-    initMode () {
-      switch (this.playMode) {
-        case modeType.loop:
-          this.modeType = 'loop'
-          this.modeText = '列表循环'
-          break
-        case modeType.single:
-          this.modeType = 'single'
-          this.modeText = '单曲循环'
-          break
-        case modeType.shuffle:
-          this.modeType = 'shuffle'
-          this.modeText = '随机播放'
-          break
-      }
-    },
+    ...mapActions(['setPlayerType', 'setPlayMode', 'setCurIndex', 'setPlaying']),
     hideListPlayer () {
-      this.setPlayerType('MiniPlayer')
+      this.setPlayerType(playerType.mini)
     },
     switchMode () {
       switch (this.playMode) {
         case modeType.loop:
           this.setPlayMode(modeType.single)
-          this.modeType = 'single'
-          this.modeText = '单曲循环'
           break
         case modeType.single:
           this.setPlayMode(modeType.shuffle)
-          this.modeType = 'shuffle'
-          this.modeText = '随机播放'
           break
         case modeType.shuffle:
           this.setPlayMode(modeType.loop)
-          this.modeType = 'loop'
-          this.modeText = '列表循环'
           break
       }
     },
     selectSong (index) {
-      if (this.curIndex === index) return
-      this.setCurIndex(index)
-      this.setCurLyric(this.playlist[index].id)
+      this.isPlaying || this.setPlaying(true)
+      this.curIndex === index || this.setCurIndex(index)
     }
   }
 }
@@ -145,7 +120,7 @@ export default {
         line-height: 100px;
         font-size: 50px;
         color: #939393;
-        .loop-mode{
+        .play-mode{
           margin-right: 10px;
         }
         &>span{

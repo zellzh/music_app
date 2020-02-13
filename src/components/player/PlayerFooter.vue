@@ -15,15 +15,15 @@
     </section>
     <section class="player-handle">
       <div class="mode" @click.stop="switchMode">
-        <svg-icon :icon-name="modeType"/>
+        <svg-icon :icon-name="playMode"/>
       </div>
-      <div class="prev">
+      <div class="prev" @click.stop="prev">
         <svg-icon icon-name="prev"/>
       </div>
       <div class="play" @click.stop="switchPlay">
-        <svg-icon :icon-name="isPlay" ref="icon"/>
+        <svg-icon :icon-name="isPlaying ? 'pause' : 'play'"/>
       </div>
-      <div class="next">
+      <div class="next" @click.stop="next">
         <svg-icon icon-name="next"/>
       </div>
       <div class="list">
@@ -39,50 +39,32 @@ import modeType from '../../store/modeType'
 
 export default {
   name: 'PlayerFooter',
-  data () {
-    return {
-      isPlay: 'play',
-      modeType: ''
-    }
-  },
   computed: {
-    ...mapState(['isPlaying', 'playMode'])
+    ...mapState(['isPlaying', 'playMode', 'curIndex'])
   },
   methods: {
-    ...mapActions(['setPlaying', 'setPlayMode']),
+    ...mapActions(['setPlaying', 'setPlayMode', 'setCurIndex']),
     switchPlay () {
       this.setPlaying(!this.isPlaying)
-      this.isPlay = this.isPlaying ? 'pause' : 'play'
     },
     switchMode () {
       switch (this.playMode) {
         case modeType.loop:
           this.setPlayMode(modeType.single)
-          this.modeType = 'single'
           break
         case modeType.single:
           this.setPlayMode(modeType.shuffle)
-          this.modeType = 'shuffle'
           break
         case modeType.shuffle:
           this.setPlayMode(modeType.loop)
-          this.modeType = 'loop'
           break
       }
-    }
-  },
-  mounted () {
-    this.isPlay = this.isPlaying ? 'pause' : 'play'
-    switch (this.playMode) {
-      case modeType.loop:
-        this.modeType = 'loop'
-        break
-      case modeType.single:
-        this.modeType = 'single'
-        break
-      case modeType.shuffle:
-        this.modeType = 'shuffle'
-        break
+    },
+    next () {
+      this.setCurIndex(this.curIndex + 1)
+    },
+    prev () {
+      this.setCurIndex(this.curIndex - 1)
     }
   }
 }

@@ -13,7 +13,7 @@
             <div class="header-right"></div>
           </div>
           <div class="inner-scroll" ref="innerScroll">
-            <DetailList @selectAll="selectAll" :songlist="albumDetail.tracks"/>
+            <DetailList @selectAll="selectAll" :type="type" :songlist="albumDetail.tracks"/>
           </div>
         </section>
       </div>
@@ -53,19 +53,16 @@ export default {
     switch (this.type) {
       case 'personalized': // 推荐歌单详情
         getPersonalizedDetail(this.id).then(data => {
-          if (data) {
-            this.albumDetail = data.playlist
-          }
+          data && (this.albumDetail = data.playlist)
         })
         break
       case 'album': // 最新专辑内容
         getAlbumDetail(this.id).then(data => {
-          if (data) {
-            this.albumDetail = {
-              name: data.album.name,
-              coverImgUrl: data.album.picUrl,
-              tracks: data.songs
-            }
+          if (!data) return
+          this.albumDetail = {
+            name: data.album.name,
+            coverImgUrl: data.album.picUrl,
+            tracks: data.songs
           }
         })
         break
@@ -80,15 +77,15 @@ export default {
   },
   methods: {
     ...mapActions(['setPlaylist', 'setPlayerType', 'setCurIndex']),
-    async selectAll (selectIndex) {
+    selectAll (selectIndex) {
       this.setPlayerType('NormalPlayer')
-      if (this.curIndex !== selectIndex) this.setCurIndex(selectIndex)
+      this.curIndex === selectIndex || this.setCurIndex(selectIndex)
       let ids = this.albumDetail.tracks.map(item => item.id)
-      if (this.playlist.length > 0) {
-        let temp = this.playlist.map(item => item.id)
-        if (ids.every((value, index) => value === temp[index])) return // 同playlist不重复请求
-      }
-      this.setPlaylist(ids)
+
+      // 同playlist不重复请求
+      let temp = this.playlist.map(item => item.id)
+      if (ids.length === temp.length && ids.every((value, index) => value === temp[index])) return
+      this.setPlaylist({ ids: ids })
     },
     // BS初始化
     initScroll () {

@@ -4,7 +4,7 @@
       <h3 class="title">最新音乐</h3>
     </div>
     <ul class="newsong-list">
-      <li class="newsong-item" v-for="(value, index) in songs" :key="value.id" @click="showPlayer">
+      <li class="newsong-item" v-for="(value, index) in songs" :key="value.id" @click="selectSong(value.id)">
         <div class="item-left">
           <p class="item-info">
             {{value.name}}
@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
+import playerType from '../../store/playerType'
 
 export default {
   name: 'NewSong',
@@ -36,6 +37,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['curIndex']),
     // 格式化歌手
     artists () {
       let artists = []
@@ -55,9 +57,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setPlayerType']),
-    showPlayer () {
-      this.setPlayerType('NormalPlayer')
+    ...mapActions(['setPlayerType', 'setPlaylist', 'setCurIndex']),
+    selectSong (id) {
+      this.setPlaylist({ ids: [id], type: 'one' })
+      this.setPlayerType(playerType.normal)
     }
   }
 }

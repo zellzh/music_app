@@ -1,5 +1,5 @@
 export default {
-  loop: 0,
-  single: 1,
-  shuffle: 2
+  loop: 'loop',
+  single: 'single',
+  shuffle: 'shuffle'
 }

@@ -15,6 +15,7 @@ export default {
   playlist: [],
   curIndex: 0,
   curLyric: {},
+  showDisc: false, // disc动画
 
   // 优化项: 待续
   swiper: null // 部分界面显示, 暂停swiper

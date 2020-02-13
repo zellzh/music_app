@@ -20,6 +20,11 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    },
+    type: {
+      type: String,
+      default: '',
+      required: true
     }
   },
   computed: {
@@ -32,10 +37,11 @@ export default {
           item.ar.forEach((value, index) => {
             formatArtist += index === 0 ? value.name : '/' + value.name
           })
-          formatArtist += ' - ' + item.al.name
+          formatArtist += this.type === 'album' ? '' : ' - ' + item.al.name
           artists.push(formatArtist)
         } else {
-          artists.push(item.ar[0].name + ' - ' + item.al.name)
+          let temp = this.type === 'album' ? item.ar[0].name : item.ar[0].name + ' - ' + item.al.name
+          artists.push(temp)
         }
       })
       return artists
@@ -57,7 +63,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 100px;
+    height: 120px;
     padding: 10px 15px;
     border-bottom: 1px solid #ccc;
     .item-left{

@@ -1,6 +1,6 @@
 <template>
     <header class="player-header">
-      <div class="header-left" @click.stop="switchPlayer">
+      <div class="header-left" @click.stop="showMiniPlayer">
         <svg-icon iconName="down"/>
       </div>
       <div class="header-info">
@@ -13,6 +13,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import playerType from '../../store/playerType'
 
 export default {
   name: 'Header',
@@ -21,8 +22,8 @@ export default {
   },
   methods: {
     ...mapActions(['setPlayerType']),
-    switchPlayer () {
-      this.setPlayerType('MiniPlayer')
+    showMiniPlayer () {
+      this.setPlayerType(playerType.mini)
     }
   }
 }

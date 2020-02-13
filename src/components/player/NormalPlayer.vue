@@ -4,7 +4,10 @@
     <PlayerMiddle/>
     <PlayerFooter/>
     <div class="bg">
-      <img :src="curSong.picUrl" alt="">
+      <div class="bg-prev" ref="prevBg"/>
+      <transition>
+        <img v-if="showDisc" :src="curSong.picUrl" alt="">
+      </transition>
       <div class="bg-mask"/>
     </div>
   </section>
@@ -14,7 +17,7 @@
 import PlayerHeader from './PlayerHeader'
 import PlayerMiddle from './PlayerMiddle'
 import PlayerFooter from './PlayerFooter'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'NormalPlayer',
@@ -24,7 +27,13 @@ export default {
     PlayerFooter
   },
   computed: {
+    ...mapState(['showDisc']),
     ...mapGetters(['curSong'])
+  },
+  watch: {
+    curSong (newVal, oldVal) {
+      this.$refs.prevBg.style.backgroundImage = `url("${oldVal.picUrl}")`
+    }
   }
 }
 </script>
@@ -36,20 +45,39 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  //@include bgc-type($bgc-sub);
   .bg{
     width: 100%;
     height: 100%;
-    text-align: center;
     position: fixed;
     top: 0;
     left: 0;
     @include z-index(bg);
+
+    // disc 过渡
+    .v-enter, .v-leave-to{
+      opacity: 0;
+    }
+    .v-enter-active, .v-leave-active{
+      transition: opacity 1s linear;
+    }
     img{
-      margin: 0 -100%;
+      width: 100%;
       height: 100%;
+      object-fit: cover;
       filter: blur(60px);
       transform: scale(1.2); // 去除白边
+    }
+    .bg-prev{
+      width: 100%;
+      height: 100%;
+      background: no-repeat center center;
+      background-size: cover;
+      filter: blur(60px);
+      transform: scale(1.2); // 去除白边
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
     }
     .bg-mask{
       width: 100%;

@@ -18,8 +18,9 @@ const routes = [
     component: Recommend,
     // 子路由
     children: [
-      { path: 'detail',
-        props: (route) => ({ type: route.query.type, id: route.query.id }),
+      {
+        path: 'detail',
+        props: route => ({ type: route.query.type, id: route.query.id }),
         component: Detail
       }
     ]

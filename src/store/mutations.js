@@ -33,5 +33,8 @@ export default {
   },
   [types.SET_CUR_LYRIC] (state, obj) {
     state.curLyric = obj
+  },
+  [types.SET_SHOW_DISC] (state, boolean) {
+    state.showDisc = boolean
   }
 }

@@ -2,12 +2,14 @@
   <section class="player-middle">
     <swiper :options="swiperOption" ref="mySwiper">
       <swiper-slide class="cd">
-        <div class="cd-top" ref="disc">
-          <img class="cd-cover" :src="curSong.picUrl" alt="">
+        <div :class="{'cd-top': true, active: isPlaying}">
+          <transition>
+            <img v-if="showDisc" class="cd-cover" :src="curSong.picUrl" alt="">
+          </transition>
         </div>
         <div class="cd-bottom">
           <div class="cd-favorite" @click="switchFavorite">
-            <svg-icon :icon-name="favoriteName"/>
+            <svg-icon :icon-name="this.isFavorite ? 'favorites_fill' : 'favorites'"/>
           </div>
           <p class="cd-lyric">就分段尚福林中中</p>
         </div>
@@ -43,7 +45,7 @@ export default {
   },
   data () {
     return {
-      favoriteName: '',
+      prevSong: {},
       swiperOption: {
         // 分页器
         pagination: {
@@ -59,35 +61,25 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isPlaying', 'isFavorite', 'curLyric']),
+    ...mapState(['isPlaying', 'isFavorite', 'curLyric', 'showDisc']),
     ...mapGetters(['curSong']),
     fixedLrc () { // 不支持滚动的歌词
       return this.curLyric.lrcObj instanceof Array
     },
     noLyric () { // 没有歌词
-      return this.curLyric.lrcObj ? Object.keys(this.curLyric.lrcObj).length === 0 : false
+      return this.curLyric.lrcObj && Object.keys(this.curLyric.lrcObj).length === 0
     }
   },
   methods: {
     ...mapActions(['setFavorite', 'setCurLyric']),
     switchFavorite () {
       this.setFavorite(!this.isFavorite)
-      this.favoriteName = this.isFavorite ? 'favorites_fill' : 'favorites'
     }
   },
   watch: {
-    isPlaying (newVal) {
-      let discClass = this.$refs.disc.classList
-      newVal ? discClass.add('active') : discClass.remove('active')
-    },
-    curSong (newVal) {
-      this.setCurLyric(newVal.id)
-    }
   },
   mounted () {
-    let discClass = this.$refs.disc.classList
-    this.isPlaying ? discClass.add('active') : discClass.remove('active')
-    this.favoriteName = this.isFavorite ? 'favorites_fill' : 'favorites'
+    // this.favoriteName = this.isFavorite ? 'favorites_fill' : 'favorites'
   }
 }
 </script>
@@ -111,8 +103,16 @@ export default {
         background: url("../../assets/images/player-disc.png") no-repeat;
         background-size: 100%;
         position: relative;
-        animation: spin 15s linear 600ms infinite;
+        animation: spin 15s linear 700ms infinite;
         animation-play-state: paused;
+
+        // disc 过渡
+        .v-enter, .v-leave-to{
+          opacity: 0;
+        }
+        .v-enter-active, .v-leave-active{
+          transition: opacity 1s linear;
+        }
         .cd-cover{
           width: 373px;
           height: 373px;
@@ -125,14 +125,13 @@ export default {
 
           // 图片水平居中
           object-fit: cover;
-          /*
-          text-align: center;
-          img{
-            width: 100%;
-            height: 100%;
-            margin: auto -100%;
-          }
-           */
+
+          // text-align: center;
+          // img{
+          //   width: 100%;
+          //   height: 100%;
+          //   margin: auto -100%;
+          // }
         }
         &.active{
           animation-play-state: running;
@@ -192,5 +191,9 @@ export default {
   100% {
     transform: rotate(360deg);
   }
+}
+@keyframes fadein {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 </style>

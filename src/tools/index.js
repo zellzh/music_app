@@ -24,3 +24,42 @@ export function parseLyric (data) {
   lyricObj = count === lycArr.length ? lycArr : lyricObj
   return lyricObj
 }
+
+// 事件函数节流
+export function throttle (fn, delay) {
+  let timerID
+  return function () {
+    let context = this
+    let args = arguments
+    if (!timerID) {
+      timerID = setTimeout(() => {
+        timerID = null
+        fn.apply(context, args)
+      }, delay || 1000)
+    }
+  }
+}
+
+// 事件函数防抖
+export function debounce (fn, delay, immediate) {
+  let timeout
+
+  return function () {
+    let context = this
+    let args = arguments
+    timeout && clearTimeout(timeout)
+
+    // immediate: 防抖时间外触发会立即执行
+    if (immediate) {
+      let callNow = !timeout
+      timeout = setTimeout(() => {
+        timeout = null
+      }, delay || 1000)
+      if (callNow) fn.apply(context, args)
+    } else {
+      timeout = setTimeout(function () {
+        fn.apply(context, args)
+      }, delay || 1000)
+    }
+  }
+}
